@@ -1,4 +1,9 @@
-import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import {
+  AbstractControl,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+} from '@angular/forms';
 
 interface IDynamicErrorField {
   [error: string]: string;
@@ -6,7 +11,6 @@ interface IDynamicErrorField {
 
 export const usernameValidator = (): ValidatorFn => {
   return (control: AbstractControl): ValidationErrors | null => {
-    return null;
     const allowedUsernamePattern = new RegExp(/[A-Za-z0-9_]+$/);
     const errorObject: IDynamicErrorField = {};
     /**
@@ -45,5 +49,57 @@ export const emailValidator = (): ValidatorFn => {
       };
     }
     return null;
+  };
+};
+
+export const passwordValidator = (): ValidatorFn => {
+  return (form: AbstractControl): ValidationErrors | null => {
+    const { password, confirmPassword } = form.value;
+    const passwordError: IDynamicErrorField = {};
+    /**
+     * both passwords must be there
+     */
+    if (!password && !confirmPassword) {
+      passwordError['passwordMissing'] = 'Password required';
+    }
+
+    /**
+     * both passwords must match
+     */
+    if (password !== confirmPassword) {
+      passwordError['passwordsDoNotMatch'] = 'Password mismatch';
+    }
+
+    /**
+     * we can use the password, or the confirmPassword to make the check, it is up
+     * to you, but best to use one of either, preferrably the password field
+     */
+    if (password) {
+      /**
+       * The password must be at least 8 characters long
+       */
+      if (password.length <= 8) {
+        passwordError['length'] = 'Invalid length';
+      }
+      /**
+       * The password must start with an upper case character
+       */
+      if (!password.charAt(0).match(new RegExp(/[A-Z]/))) {
+        passwordError['contains-upper-case'] = 'Missing uppercase';
+      }
+      /**
+       * The password must contain at least one of these symbols: !@#$%&*^
+       */
+      if (!password.match(new RegExp(/[!@#$%&*]+/))) {
+        passwordError['contains-symbols'] = 'Missing uppercase';
+      }
+      /**
+       * The password must contain at least one number
+       */
+      if (!password.match(new RegExp(/[0-9]+/))) {
+        passwordError['contains-numbers'] = 'Missing uppercase';
+      }
+    }
+    return Object.keys(passwordError).length !== 0 ? passwordError : null;
   };
 };

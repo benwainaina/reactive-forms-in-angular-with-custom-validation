@@ -61,8 +61,20 @@
         placeholder="Your password"
         formControlName="password"
       />
+      <ng-template [ngTemplateOutlet]="passwordMismatchTemplate"></ng-template>
       <div class="password-valid-checks">
-        <!-- a loop here for the passwords validity checks -->
+        <div
+          class="password-valid-checks__check"
+          *ngFor="let check of passwordValidationChecks"
+          [ngClass]="{
+            valid:
+              (signupForm.get('password')?.touched ||
+                signupForm.get('password')?.dirty) &&
+              !signupForm.hasError(check.key)
+          }"
+        >
+          {{ check.label }}
+        </div>
       </div>
     </div>
     <div class="wrapper__signup-form__input-wrapper">
@@ -72,7 +84,7 @@
         placeholder="Confirm password"
         formControlName="confirmPassword"
       />
-      <span class="wrapper__signup-form__input-wrapper__error"></span>
+      <ng-template [ngTemplateOutlet]="passwordMismatchTemplate"></ng-template>
     </div>
     <button
       [disabled]="signupForm.invalid"
@@ -83,3 +95,18 @@
     </button>
   </form>
 </div>
+
+<!-- shared templates -->
+<ng-template #passwordMismatchTemplate>
+  <span
+    *ngIf="
+      (signupForm.get('password')?.touched ||
+        signupForm.get('password')?.dirty) &&
+      (signupForm.get('confirmPassword')?.touched ||
+        signupForm.get('confirmPassword')?.dirty) &&
+      signupForm.hasError('passwordsDoNotMatch')
+    "
+    class="wrapper__signup-form__input-wrapper__error"
+    >Passwords do not match</span
+  >
+</ng-template>
