@@ -53,7 +53,7 @@
       }
     }
 
-    &__signup {
+    &__signup-button {
       border: none;
       outline: none;
       background-color: black;
@@ -61,6 +61,11 @@
       cursor: pointer;
       padding: 12px;
       border-radius: 4px;
+
+      &.disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+      }
     }
   }
 }

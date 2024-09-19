@@ -1,14 +1,33 @@
 <div class="wrapper poppins-regular">
   <img class="wrapper__logo" src="/assets/images/logo.svg" alt="" />
-  <form class="wrapper__signup-form">
+  <form
+    [formGroup]="signupForm"
+    (ngSubmit)="onFormSubmit()"
+    class="wrapper__signup-form"
+  >
     <div class="wrapper__signup-form__input-wrapper">
       <input
         class="wrapper__signup-form__input-wrapper__field"
         type="text"
         placeholder="Your username"
+        formControlName="username"
       />
-      <span class="wrapper__signup-form__input-wrapper__error"
-        >Username must contain one of A-Z or a-z or 0-9
+      <span
+        class="wrapper__signup-form__input-wrapper__error"
+        *ngIf="
+          signupForm.get('username')?.errors &&
+          (signupForm.get('username')?.dirty ||
+            signupForm.get('username')?.touched)
+        "
+      >
+        <span
+          *ngIf="signupForm.get('username')?.hasError('usernameIsRequired')"
+        >
+          Username is required
+        </span>
+        <span *ngIf="signupForm.get('username')?.hasError('invalidUsername')">
+          Username must contain one of A-Z or a-z or 0-9 or _
+        </span>
       </span>
     </div>
     <div class="wrapper__signup-form__input-wrapper">
@@ -16,17 +35,31 @@
         class="wrapper__signup-form__input-wrapper__field"
         type="email"
         placeholder="Your email"
+        formControlName="email"
       />
-      <span class="wrapper__signup-form__input-wrapper__error"
-        >The email must be a work email so it should end with
-        &#64;thebae.com</span
+      <span
+        *ngIf="
+          (signupForm.get('email')?.dirty ||
+            signupForm.get('email')?.touched) &&
+          signupForm.get('email')?.errors
+        "
+        class="wrapper__signup-form__input-wrapper__error"
       >
+        <span *ngIf="signupForm.get('email')?.hasError('missingEmail')">
+          Email address is required
+        </span>
+        <span *ngIf="signupForm.get('email')?.hasError('invalidEmail')">
+          The email must be a work email so it should end with
+          &#64;the__b_a_e.com
+        </span>
+      </span>
     </div>
     <div class="wrapper__signup-form__input-wrapper">
       <input
         class="wrapper__signup-form__input-wrapper__field"
         type="password"
         placeholder="Your password"
+        formControlName="password"
       />
       <div class="password-valid-checks">
         <!-- a loop here for the passwords validity checks -->
@@ -37,10 +70,15 @@
         class="wrapper__signup-form__input-wrapper__field"
         type="password"
         placeholder="Confirm password"
+        formControlName="confirmPassword"
       />
       <span class="wrapper__signup-form__input-wrapper__error"></span>
     </div>
-    <button class="wrapper__signup-form__signup poppins-bold">
+    <button
+      [disabled]="signupForm.invalid"
+      class="wrapper__signup-form__signup-button poppins-bold"
+      [ngClass]="{ disabled: signupForm.invalid }"
+    >
       Become A Member
     </button>
   </form>
