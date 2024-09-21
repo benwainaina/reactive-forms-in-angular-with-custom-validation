@@ -21,9 +21,9 @@ export const usernameValidator = (): ValidatorFn => {
      *
      * For example, you cannot have it like this
      *
-     * errorObject['usernameIsRequired'] = ''
+     * errorObject['usernameIsRequired'] = '' or errorObject['usernameIsRequired'] = false
      *
-     * As this will be treated as a null and the clause will not be
+     * As these will be treated as a null and 'not true', thus the clause will not be
      * executed
      */
     if (!control.value) {
@@ -40,11 +40,10 @@ export const emailValidator = (): ValidatorFn => {
     const out: IDynamicErrorField = {};
     const [_, domain] = control.value?.split('@');
     if (!control.value) {
-      return { missingEmail: 'Email address is required' };
+      return { missingEmail: true };
     } else if (domain !== 'the__b_a_e.com') {
       return {
-        invalidEmail:
-          'The email must be a work email so it should end with &#64;the__b_a_e.com',
+        invalidEmail: true,
       };
     }
     return null;
