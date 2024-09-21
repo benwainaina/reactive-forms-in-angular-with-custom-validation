@@ -58,14 +58,7 @@ export const passwordValidator = (): ValidatorFn => {
     /**
      * create a default password error each time this validator is invoked
      */
-    const passwordError: {
-      passwordMissing: boolean;
-      passwordsDoNotMatch: boolean;
-      invalidLength: boolean;
-      missingUpperCase: boolean;
-      missingSymbols: boolean;
-      missingNumber: boolean;
-    } = {
+    const passwordError: IDynamicErrorField = {
       passwordMissing: true,
       passwordsDoNotMatch: true,
       invalidLength: true,
@@ -118,6 +111,13 @@ export const passwordValidator = (): ValidatorFn => {
         passwordError['missingNumber'] = false;
       }
     }
-    return Object.keys(passwordError).length !== 0 ? passwordError : null;
+    let passwordFormHasError = false;
+    for (const key in passwordError) {
+      if (passwordError[key]) {
+        passwordFormHasError = true;
+        break;
+      }
+    }
+    return passwordFormHasError ? passwordError : null;
   };
 };
