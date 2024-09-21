@@ -6,7 +6,7 @@ import {
 } from '@angular/forms';
 
 interface IDynamicErrorField {
-  [error: string]: string;
+  [error: string]: boolean;
 }
 
 export const usernameValidator = (): ValidatorFn => {
@@ -27,10 +27,9 @@ export const usernameValidator = (): ValidatorFn => {
      * executed
      */
     if (!control.value) {
-      errorObject['usernameIsRequired'] = 'Username is required';
+      errorObject['usernameIsRequired'] = true;
     } else if (!control.value?.match(allowedUsernamePattern)) {
-      errorObject['invalidUsername'] =
-        'Username must contain one of A-Z or a-z or 0-9 or _';
+      errorObject['invalidUsername'] = true;
     }
     return control.value?.match(allowedUsernamePattern) ? null : errorObject;
   };
@@ -55,19 +54,38 @@ export const emailValidator = (): ValidatorFn => {
 export const passwordValidator = (): ValidatorFn => {
   return (form: AbstractControl): ValidationErrors | null => {
     const { password, confirmPassword } = form.value;
-    const passwordError: IDynamicErrorField = {};
+
     /**
-     * both passwords must be there
+     * create a default password error each time this validator is invoked
      */
-    if (!password && !confirmPassword) {
-      passwordError['passwordMissing'] = 'Password required';
+    const passwordError: {
+      passwordMissing: boolean;
+      passwordsDoNotMatch: boolean;
+      invalidLength: boolean;
+      missingUpperCase: boolean;
+      missingSymbols: boolean;
+      missingNumber: boolean;
+    } = {
+      passwordMissing: true,
+      passwordsDoNotMatch: true,
+      invalidLength: true,
+      missingUpperCase: true,
+      missingSymbols: true,
+      missingNumber: true,
+    };
+
+    /**
+     * check if both passwords are there
+     */
+    if (password && confirmPassword) {
+      passwordError['passwordMissing'] = false;
     }
 
     /**
-     * both passwords must match
+     * check if the passwords match
      */
-    if (password !== confirmPassword) {
-      passwordError['passwordsDoNotMatch'] = 'Password mismatch';
+    if (password === confirmPassword) {
+      passwordError['passwordsDoNotMatch'] = false;
     }
 
     /**
@@ -76,28 +94,28 @@ export const passwordValidator = (): ValidatorFn => {
      */
     if (password) {
       /**
-       * The password must be at least 8 characters long
+       * Check for appropriate password length
        */
-      if (password.length <= 8) {
-        passwordError['length'] = 'Invalid length';
+      if (password.length > 8) {
+        passwordError['invalidLength'] = false;
       }
       /**
-       * The password must start with an upper case character
+       * Check if password starts with upper case letter
        */
-      if (!password.charAt(0).match(new RegExp(/[A-Z]/))) {
-        passwordError['contains-upper-case'] = 'Missing uppercase';
+      if (password.charAt(0).match(new RegExp(/[A-Z]/))) {
+        passwordError['missingUpperCase'] = false;
       }
       /**
-       * The password must contain at least one of these symbols: !@#$%&*^
+       * Check if password has either of these symbols: !@#$%&*^
        */
-      if (!password.match(new RegExp(/[!@#$%&*]+/))) {
-        passwordError['contains-symbols'] = 'Missing uppercase';
+      if (password.match(new RegExp(/[!@#$%&*]+/))) {
+        passwordError['missingSymbols'] = false;
       }
       /**
-       * The password must contain at least one number
+       * Check if password has a number
        */
-      if (!password.match(new RegExp(/[0-9]+/))) {
-        passwordError['contains-numbers'] = 'Missing uppercase';
+      if (password.match(new RegExp(/[0-9]+/))) {
+        passwordError['missingNumber'] = false;
       }
     }
     return Object.keys(passwordError).length !== 0 ? passwordError : null;

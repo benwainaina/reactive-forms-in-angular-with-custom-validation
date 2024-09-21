@@ -16,8 +16,7 @@
         class="wrapper__signup-form__input-wrapper__error"
         *ngIf="
           signupForm.get('username')?.errors &&
-          (signupForm.get('username')?.dirty ||
-            signupForm.get('username')?.touched)
+          signupForm.get('username')?.dirty
         "
       >
         <span
@@ -39,9 +38,7 @@
       />
       <span
         *ngIf="
-          (signupForm.get('email')?.dirty ||
-            signupForm.get('email')?.touched) &&
-          signupForm.get('email')?.errors
+          signupForm.get('email')?.dirty && signupForm.get('email')?.errors
         "
         class="wrapper__signup-form__input-wrapper__error"
       >
@@ -93,6 +90,9 @@
     >
       Become A Member
     </button>
+    <h2 *ngIf="showConfirmation" class="wrapper__signup-form__confirmation">
+      🥳 Welcome aboard, you are now part of the BAE Channel!
+    </h2>
   </form>
 </div>
 

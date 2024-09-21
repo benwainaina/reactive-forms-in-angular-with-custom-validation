@@ -32,9 +32,9 @@
         padding: 12px;
         outline: none;
         border: 1px solid #ddd;
+        font-family: "Poppins", system-ui;
 
         &::placeholder {
-          font-family: "Poppins", system-ui;
         }
 
         &:active {
@@ -82,6 +82,10 @@
           color: green;
         }
       }
+    }
+
+    &__confirmation {
+      text-align: center;
     }
   }
 }

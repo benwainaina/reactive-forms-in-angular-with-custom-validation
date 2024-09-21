@@ -32,24 +32,30 @@ export class AppComponent {
   );
 
   public passwordValidationChecks: Array<{ key: string; label: string }> = [
-    { key: 'length', label: 'The password must be at least 8 characters long' },
     {
-      key: 'contains-upper-case',
+      key: 'invalidLength',
+      label: 'The password must be at least 8 characters long',
+    },
+    {
+      key: 'missingUpperCase',
       label: 'The password must start with an upper case character',
     },
     {
-      key: 'contains-symbols',
+      key: 'missingSymbols',
       label:
         'The password must contain at least one of these symbols: !@#$%&*^',
     },
     {
-      key: 'contains-numbers',
+      key: 'missingNumber',
       label: 'The password must contain at least one number',
     },
   ];
 
+  public showConfirmation: boolean = false;
+
   public onFormSubmit(): void {
     console.log('this.signupform', this.signupForm.value);
+    this.showConfirmation = true;
   }
 }
 // ben@the__b_a_e.com
